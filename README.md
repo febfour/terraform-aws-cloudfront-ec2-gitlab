@@ -1,21 +1,24 @@
 # Terraform AWS CloudFront with EC2 Origin for GitLab
 
-## ⚠️ Current Status: Work in Progress
+## 概要
+このモジュールは、GitLabをAWS CloudFrontの背後にEC2インスタンスをオリジンとして配置するためのTerraformコードを提供します。これにより、GitLabをグローバルに配信するCDN構成を実現します。
 
-This repository contains Terraform code capable of deploying GitLab behind AWS CloudFront with EC2 origin; however, it is currently **incomplete**.
+## ⚠️ 現在のステータス: 開発進行中
 
-### Known Issue
-- **Creating new users in GitLab is not possible at this time** due to failing CSRF (Cross-Site Request Forgery) authentication.
-- This issue likely stems from caching behaviors or header settings in CloudFront that interfere with GitLab’s built-in security mechanisms.
+このリポジトリには、AWS CloudFrontとEC2オリジンを使用してGitLabをデプロイするためのTerraformコードが含まれていますが、現時点では **開発中** です。
 
-### Planned Resolution
-- Review and adjust CloudFront's cache settings or header-forwarding configuration to properly handle CSRF tokens and form submissions.
+### 既知の問題
+- **現在GitLabでの新規ユーザー作成ができません** - CSRF（クロスサイトリクエストフォージェリ）認証に失敗するため
+- この問題は、CloudFrontのキャッシュ動作やヘッダー設定がGitLabの組み込みセキュリティメカニズムと干渉することが原因と考えられます
 
-Please consider this known limitation before using or contributing to the repository.
+### 計画されている解決策
+- CSRFトークンとフォーム送信を適切に処理するために、CloudFrontのキャッシュ設定やヘッダー転送設定を見直し、調整する
 
-## Required GitLab Configuration
+このリポジトリを使用または貢献する前に、この既知の制限事項を考慮してください。
 
-To host GitLab behind AWS CloudFront with an EC2 origin, you must configure GitLab by editing the file `/etc/gitlab/gitlab.rb` with the following settings:
+## GitLab設定要件
+
+AWS CloudFrontの背後にEC2オリジンでGitLabをホストするには、`/etc/gitlab/gitlab.rb`ファイルを以下の設定で編集する必要があります：
 
 ```ruby
 external_url "{CloudFront URL}"
@@ -35,18 +38,25 @@ nginx['proxy_set_headers'] = {
 }
 ```
 
-Replace `{CloudFront URL}` and `{CloudFront Domain}` with your actual CloudFront distribution URL and domain.
+`{CloudFront URL}`と`{CloudFront Domain}`を実際のCloudFront配信URLとドメインに置き換えてください。
 
-### Applying Configuration
+### 設定の適用
 
-After editing the file, apply the configuration changes by running:
+ファイルを編集した後、以下のコマンドを実行して設定変更を適用します：
 
 ```bash
 gitlab-ctl reconfigure
 gitlab-ctl restart
 ```
 
-## Known Issues
+## 使い方
 
-There is a known issue related to CSRF authentication when using GitLab behind CloudFront. Contributions via pull requests to resolve this issue are welcome.
+このモジュールを使用するには、以下の手順に従ってください：
 
+1. このリポジトリをクローンする
+2. 必要に応じて変数を設定する
+3. `terraform init`、`terraform plan`、`terraform apply`を実行する
+
+## 貢献方法
+
+このプロジェクトへの貢献を歓迎します。特に、CSRFの認証に関する問題を解決するプルリクエストをお待ちしています。
